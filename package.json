@@ -4,12 +4,11 @@
   "description": "Your freshest place for film-related data",
   "main": "index.js",
   "scripts": {
-    "preinstall": "node -v | grep v6 || (echo 'Please update Node.js to v6. Other versions are not supported' && exit 1)",
     "start": "nodemon --ignore spec/ index.js",
     "test": "NODE_ENV=test PORT=3333 mocha --recursive --reporter spec"
   },
   "author": "GA Credentials",
-  "license": "CC­BY­NC­SA 4.0, GNU GPLv3",
+  "license": "SEE LICENSE IN LICENSE.txt",
   "devDependencies": {
     "chai": "^3.5.0",
     "mocha": "^3.2.0",
@@ -24,5 +23,16 @@
   },
   "engines": {
     "node": ">= 6.8.1"
-  }
+  },
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Asher978/Fresh-Potatoes-Task.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Asher978/Fresh-Potatoes-Task/issues"
+  },
+  "homepage": "https://github.com/Asher978/Fresh-Potatoes-Task#readme"
 }

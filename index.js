@@ -35,12 +35,11 @@ function getFilmRecommendations(req, res, next) {
   // res.status(500).send('Not Implemented');
 
   /* ------------------------  PARAMS ERROR HANDLING ------------------------- */
-  let reqFilmId = req.params.id;
-      offset = req.query.offset,
-      limit = req.query.limit;
+  const { id } = req.params;
+  const { offset, limit } = req.query;
       
   // req.params error handling
-  if ( isNaN(reqFilmId) || reqFilmId === undefined )  {
+  if ( isNaN(id) || id === undefined )  {
     return res.status(422).json({ message: 'key missing' });
   };
 
@@ -49,7 +48,7 @@ function getFilmRecommendations(req, res, next) {
     return res.status(422).json({ message: 'key missing' });    
   };
   /* -------------------------------------------------------------------------- */
-
+  
 
 
 

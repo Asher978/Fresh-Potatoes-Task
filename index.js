@@ -21,25 +21,39 @@ let sequelize = new Sequelize(null, null, null, {
 // ROUTES
 app.get('/films/:id/recommendations', getFilmRecommendations);
 
+// incorrect url handling
+// maybe the message here should be that the user had hit an invalid route
+// however the test wriiten for this is expecting a message ({ message: 'key missing' })
+// therefore i left the message per the test
+app.get('/films/:id/recommendations/*', (req, res, next) => {
+  return res.status(404).json({ message: 'key missing' });
+});
+
+
 // ROUTE HANDLER
-function getFilmRecommendations(req, res) {
+function getFilmRecommendations(req, res, next) {
   // res.status(500).send('Not Implemented');
 
   /* ------------------------  PARAMS ERROR HANDLING ------------------------- */
   let reqFilmId = req.params.id;
       offset = req.query.offset,
-      limit = req.query.limit,
-      url = req.originalUrl;
+      limit = req.query.limit;
+      
+  // req.params error handling
+  if ( isNaN(reqFilmId) || reqFilmId === undefined )  {
+    return res.status(422).json({ message: 'key missing' });
+  };
 
-  if ( isNaN(reqFilmId) || isNaN(offset) || isNaN(limit) || reqFilmId === undefined )  {
-    return res.status(422).json({ message: 'key missing' })
-  }
+  //req.query error handling
+  if( (offset && limit) && (isNaN(offset) || isNaN(limit)) ) {
+    return res.status(422).json({ message: 'key missing' });    
+  };
+  /* -------------------------------------------------------------------------- */
 
 
-  
 
 
+};
 
-}
 
 module.exports = app;

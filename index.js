@@ -3,20 +3,18 @@ const sqlite = require('sqlite'),
       request = require('request'),
       express = require('express'),
       app = express();
+const sqlite3 = require('sqlite3').verbose();
+      
 
 const { PORT=3000, NODE_ENV='development', DB_PATH='./db/database.db' } = process.env;
+
+
 
 // START SERVER
 Promise.resolve()
   .then(() => app.listen(PORT, () => console.log(`App listening on port ${PORT}`)))
   .catch((err) => { if (NODE_ENV === 'development') console.error(err.stack); });
 
-// sequelize instance with referencing the sqlite3 DB
-// no authentication is required hence no user info was passed to the instance
-let sequelize = new Sequelize(null, null, null, {
-  dialect: 'sqlite',
-  storage: DB_PATH
-});
 
 // ROUTES
 app.get('/films/:id/recommendations', getFilmRecommendations);
@@ -48,10 +46,36 @@ function getFilmRecommendations(req, res, next) {
     return res.status(422).json({ message: 'key missing' });    
   };
   /* -------------------------------------------------------------------------- */
+
+
+  // open database by providing the path
+  const db = new sqlite3.Database(DB_PATH, (err) => {
+    if (err) {
+      return console.error(err.message);
+    }
+    console.log('Connected to the SQlite database.');
+  });
+
+  // variable to store the db response
+  let dbFetch = [];
+
+  // inner join query that returns the same genre films filtered by + / - 15 years of the parent film
+  let query = `SELECT films.id, films.title, films.release_date AS releaseDate, genres.name AS genre FROM films 
+  INNER JOIN genres ON films.genre_id=genres.id 
+  WHERE genre_id = (SELECT genre_id FROM films WHERE id = ${id}) AND 
+  release_date >= date((SELECT release_date FROM films WHERE id = ${id}), '-15 years') AND
+  release_date <= date((SELECT release_date FROM films WHERE id = ${id}), '+15 years')`;
   
+  // fetch from the DB using inner Join
+  db.serialize(() => {
+    db.all(query, (err, rows) => {
+      if (err) { console.error(err) };
 
+      dbFetch = rows;
 
-
+    })
+  })
+  
 };
 
 
